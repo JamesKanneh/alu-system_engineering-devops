@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Write a Bash script that transfers a file from our client to a server:
+# Transfers a file from client to server using scp
 declare -i ARGS="$#"
 if [ "$ARGS" -lt 4 ];
 then
