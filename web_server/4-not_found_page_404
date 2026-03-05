@@ -1,48 +1,8 @@
 #!/usr/bin/env bash
-# installing and config nginx
-
-apt-get update
-apt-get -y install nginx
-
-# adding a html page
-echo "Holberton School" > /var/www/html/index.html
-echo "Ceci n'est pas une page" > /usr/share/nginx/html/custom_404.html
-
-CONFIG=\
-"server {
-	listen 80 default_server;
-  	listen [::]:80 default_server;
-
-        root /var/www/html;
-
-        index index.html index.htm index.nginx-debian.html;
-
-	error_page 404 /custom_404.html;
-
-	server_name _;
-
-	rewrite ^/redirect_me(.*)$ http://www.google.com/ permanent;
-
-	location = /custom_404.html {
-		root /usr/share/nginx/html;
-		internal;
-	}
-
-        location / {
-                try_files \$uri \$uri/ =404;
-	}
-}"
-
-echo -e "$CONFIG" > /etc/nginx/sites-enabled/default
-
-# checking if service is running
-state=$(pgrep nginx)
-if [ -n "$state" ];
-then
-	sudo service nginx restart
-	echo "resarting Nginx...."
-else
-	sudo service nginx start
-	echo "Ngix started.."
-fi
-echo "done"
+# Configures nginx to have a custom 404 page
+apt-get update -y
+apt-get install nginx -y
+echo "Holberton School" | tee /var/www/html/index.html > /dev/null
+echo "Ceci n'est pas une page" | tee /var/www/html/404.html > /dev/null
+sed -i 's|server_name _;|server_name _;\n\terror_page 404 /404.html;\n\tlocation = /404.html { internal; }|' /etc/nginx/sites-available/default
+service nginx start
