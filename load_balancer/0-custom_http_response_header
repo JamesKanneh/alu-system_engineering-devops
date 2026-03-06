@@ -3,6 +3,7 @@
 apt-get update
 apt-get -y install nginx
 echo "Holberton School" > /var/www/html/index.html
+HOST=$(hostname)
 CONFIG=\
 "server {
 	listen 80 default_server;
@@ -13,13 +14,7 @@ CONFIG=\
 	location / {
 		try_files \$uri \$uri/ =404;
 	}
-	add_header X-Served-By \$hostname;
+	add_header X-Served-By $HOST;
 }"
 echo -e "$CONFIG" > /etc/nginx/sites-enabled/default
-state=$(pgrep nginx)
-if [ -n "$state" ];
-then
-	service nginx restart
-else
-	service nginx start
-fi
+service nginx restart
